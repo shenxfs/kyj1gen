@@ -48,11 +48,21 @@
 **
 ****************************************************************************/
 
+/**
+ * @brief MainWindos class
+ * @fn mainwindow.cpp
+ * @version V1.0.1
+ * @author shenxfsn@@163.com
+ */
 #include <QtWidgets>
 #include <QFileInfo>
 #include "mainwindow.h"
 #include "qtpropertybrowser/qttreepropertybrowser.h"
 #include "qtpropertybrowser/qtvariantproperty.h"
+
+/**
+ * @brief MainWindow::MainWindow
+ */
 MainWindow::MainWindow()
 {
     outPath = QDir::homePath()+tr("/kyj1");
@@ -68,13 +78,20 @@ MainWindow::MainWindow()
     setCurrentFile(QString());
 }
 
+/**
+ * @brief MainWindow::MainWindow
+ * @param fileName
+ */
 MainWindow::MainWindow(const QString &fileName)
 {
     init();
     loadFile(fileName);
 }
 
-
+/**
+ * @brief MainWindow::closeEvent
+ * @param event
+ */
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (maybeSave()) {
@@ -85,6 +102,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
+/**
+ * @brief MainWindow::newFile
+ */
 void MainWindow::newFile()
 {
     MainWindow *other = new MainWindow;
@@ -92,6 +112,9 @@ void MainWindow::newFile()
     other->show();
 }
 
+/**
+ * @brief MainWindow::open
+ */
 void MainWindow::open()
 {
     const QString fileName = QFileDialog::getOpenFileName(this);
@@ -99,6 +122,10 @@ void MainWindow::open()
         openFile(fileName);
 }
 
+/**
+ * @brief MainWindow::openFile
+ * @param fileName
+ */
 void MainWindow::openFile(const QString &fileName)
 {
     MainWindow *existing = findMainWindow(fileName);
@@ -123,11 +150,19 @@ void MainWindow::openFile(const QString &fileName)
     other->show();
 }
 
+/**
+ * @brief MainWindow::save
+ * @return
+ */
 bool MainWindow::save()
 {
     return isUntitled ? saveAs() : saveFile(curFile);
 }
 
+/**
+ * @brief MainWindow::saveAs
+ * @return
+ */
 bool MainWindow::saveAs()
 {
     QString fileName = QFileDialog::getSaveFileName(this, tr("另存"),
@@ -138,18 +173,27 @@ bool MainWindow::saveAs()
     return saveFile(fileName);
 }
 
+/**
+ * @brief MainWindow::about
+ */
 void MainWindow::about()
 {
    QMessageBox::about(this, tr("关于KYJ1gen"),
             tr("<b>KYJ1gen</b> 监控管理软件固件生成工具，"
-               "基于Qt SDI示例工程。版本V1.0"));
+               "基于Qt SDI示例工程。版本V1.0.1"));
 }
 
+/**
+ * @brief MainWindow::documentWasModified
+ */
 void MainWindow::documentWasModified()
 {
     setWindowModified(true);
 }
 
+/**
+ * @brief MainWindow::init
+ */
 void MainWindow::init()
 {
     setAttribute(Qt::WA_DeleteOnClose);
@@ -157,7 +201,7 @@ void MainWindow::init()
     isUntitled = true;
 
     textEdit = new QTextEdit;
-    textEdit->setText(tr("[Batch]\r\nS1\r\n[Product]\r\n201801 201801\r\n0.018632 1.123"));
+    textEdit->setText(tr("[Batch]\r\nS1\r\n[Product]\r\n201801 201801\r\n0.018632 1.123\r\n"));
     textEdit->document()->setModified();
 
     setCentralWidget(textEdit);
@@ -173,6 +217,10 @@ void MainWindow::init()
     setUnifiedTitleAndToolBarOnMac(true);
 }
 
+/**
+ * @brief MainWindow::tile
+ * @param previous
+ */
 void MainWindow::tile(const QMainWindow *previous)
 {
     if (!previous)
@@ -185,7 +233,11 @@ void MainWindow::tile(const QMainWindow *previous)
         move(pos);
 }
 
+
 //! [implicit tr context]
+/**
+ * @brief MainWindow::createActions
+ */
 void MainWindow::createActions()
 {
     QMenu *fileMenu = menuBar()->addMenu(tr("文件"));
@@ -310,11 +362,17 @@ void MainWindow::createActions()
 
 }
 
+/**
+ * @brief MainWindow::createStatusBar
+ */
 void MainWindow::createStatusBar()
 {
     statusBar()->showMessage(tr("Ready"));
 }
 
+/**
+ * @brief MainWindow::readSettings
+ */
 void MainWindow::readSettings()
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
@@ -329,12 +387,19 @@ void MainWindow::readSettings()
     }
 }
 
+/**
+ * @brief MainWindow::writeSettings
+ */
 void MainWindow::writeSettings()
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     settings.setValue("geometry", saveGeometry());
 }
 
+/**
+ * @brief MainWindow::maybeSave
+ * @return
+ */
 bool MainWindow::maybeSave()
 {
     if (!textEdit->document()->isModified())
@@ -355,6 +420,10 @@ bool MainWindow::maybeSave()
     return true;
 }
 
+/**
+ * @brief MainWindow::loadFile
+ * @param fileName
+ */
 void MainWindow::loadFile(const QString &fileName)
 {
 
@@ -375,15 +444,33 @@ void MainWindow::loadFile(const QString &fileName)
     statusBar()->showMessage(tr("File loaded"), 2000);
 }
 
+/**
+ * @brief MainWindow::setRecentFilesVisible
+ * @param visible
+ */
 void MainWindow::setRecentFilesVisible(bool visible)
 {
     recentFileSubMenuAct->setVisible(visible);
     recentFileSeparator->setVisible(visible);
 }
 
+/**
+ * @brief recentFilesKey
+ * @return
+ */
 static inline QString recentFilesKey() { return QStringLiteral("recentFileList"); }
+
+/**
+ * @brief fileKey
+ * @return
+ */
 static inline QString fileKey() { return QStringLiteral("file"); }
 
+/**
+ * @brief readRecentFiles
+ * @param settings
+ * @return
+ */
 static QStringList readRecentFiles(QSettings &settings)
 {
     QStringList result;
@@ -396,6 +483,11 @@ static QStringList readRecentFiles(QSettings &settings)
     return result;
 }
 
+/**
+ * @brief writeRecentFiles
+ * @param files
+ * @param settings
+ */
 static void writeRecentFiles(const QStringList &files, QSettings &settings)
 {
     const int count = files.size();
@@ -407,6 +499,10 @@ static void writeRecentFiles(const QStringList &files, QSettings &settings)
     settings.endArray();
 }
 
+/**
+ * @brief MainWindow::hasRecentFiles
+ * @return
+ */
 bool MainWindow::hasRecentFiles()
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
@@ -415,6 +511,10 @@ bool MainWindow::hasRecentFiles()
     return count > 0;
 }
 
+/**
+ * @brief MainWindow::prependToRecentFiles
+ * @param fileName
+ */
 void MainWindow::prependToRecentFiles(const QString &fileName)
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
@@ -429,6 +529,9 @@ void MainWindow::prependToRecentFiles(const QString &fileName)
     setRecentFilesVisible(!recentFiles.isEmpty());
 }
 
+/**
+ * @brief MainWindow::updateRecentFileActions
+ */
 void MainWindow::updateRecentFileActions()
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
@@ -446,12 +549,20 @@ void MainWindow::updateRecentFileActions()
         recentFileActs[i]->setVisible(false);
 }
 
+/**
+ * @brief MainWindow::openRecentFile
+ */
 void MainWindow::openRecentFile()
 {
     if (const QAction *action = qobject_cast<const QAction *>(sender()))
         openFile(action->data().toString());
 }
 
+/**
+ * @brief MainWindow::saveFile
+ * @param fileName
+ * @return
+ */
 bool MainWindow::saveFile(const QString &fileName)
 {
     QFile file(fileName);
@@ -472,6 +583,10 @@ bool MainWindow::saveFile(const QString &fileName)
     return true;
 }
 
+/**
+ * @brief MainWindow::setCurrentFile
+ * @param fileName
+ */
 void MainWindow::setCurrentFile(const QString &fileName)
 {
     static int sequenceNumber = 1;
@@ -492,6 +607,11 @@ void MainWindow::setCurrentFile(const QString &fileName)
     setWindowFilePath(curFile);
 }
 
+/**
+ * @brief MainWindow::strippedName
+ * @param fullFileName
+ * @return
+ */
 QString MainWindow::strippedName(const QString &fullFileName)
 {
     return QFileInfo(fullFileName).fileName();
@@ -510,13 +630,16 @@ MainWindow *MainWindow::findMainWindow(const QString &fileName) const
     return 0;
 }
 
+/**
+ * @brief MainWindow::creatDockWidget
+ */
 void MainWindow::creatDockWidget()
 {
     QDockWidget *dock = new QDockWidget(tr("固件输出"), this);
     //dock->setAllowedAreas(Qt::BottomDockWidgetArea);
     output = new QTextEdit(dock);
     output->setText(
-             tr("KYJ1监控管理软件固件生成工具，V1.0\n"
+             tr("KYJ1监控管理软件固件生成工具，V1.0.1\n"
                "KYJ1监控管理软件默认可执行目标文件是")
              + QFileInfo(coffPath).fileName()
              + tr("，该文件应存在Home(")
@@ -540,7 +663,6 @@ void MainWindow::creatDockWidget()
     sectionInfo = new QtTreePropertyBrowser(dock2);
     m_pVarManager1 = new QtVariantPropertyManager(sectionInfo);
 
-//symbol view
     QDockWidget *dock3 = new QDockWidget(tr("符号表"));
     symWidget = new QTableWidget(dock3);
 
@@ -556,10 +678,11 @@ void MainWindow::creatDockWidget()
     dock3->setWidget(symWidget);
     addDockWidget(Qt::BottomDockWidgetArea,dock3);
     viewMenu->addAction(dock3->toggleViewAction());
-
-
 }
 
+/**
+ * @brief MainWindow::setting
+ */
 void MainWindow::setting()
 {
     Setting *settingWidget = new Setting(this);
@@ -592,9 +715,13 @@ void MainWindow::setting()
     }
 }
 
+/**
+ * @brief MainWindow::generate
+ */
 void MainWindow::generate()
 {
     QCursor cs = cursor();
+    setCursor(Qt::WaitCursor);
     if (textEdit->document()->isModified() | isUntitled)
     {
         const QMessageBox::StandardButton ret
@@ -743,8 +870,8 @@ void MainWindow::generate()
         product_t pd = productList.at(i);
         pn = outPath + tr("/") + pd.pn +".bin";
         sn = outPath + tr("/") + pd.pn +".rep";
-        qint16 Qk = (qint16)(3.0*128/pd.k);
-        qint16 Qb = (qint16)(pd.b/3.0*32768);
+        qint16 Qk = (qint16)(3.0*128/pd.k + 0.5);
+        qint16 Qb = (qint16)(pd.b/3.0*32768 + 0.5);
         strline = QString(tr("_temperature_qk"));
         bool res;
         res = coff.SetSymbolValue(symbol_qk,&Qk);
@@ -774,13 +901,16 @@ void MainWindow::generate()
         }
         else
         {
-
+            output->append(QString(tr("OUT文件不包含Qk或Qb的数据实体，生成固件失败")));
         }
     }
     output->append(tr("固件生成结束"));
     setCursor(cs);
 }
 
+/**
+ * @brief MainWindow::coffProperty
+ */
 void MainWindow::coffProperty()
 {
     statusBar()->showMessage(tr("填充COFF文件属性视图"), 5000);

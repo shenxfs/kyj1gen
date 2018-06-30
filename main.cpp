@@ -45,14 +45,24 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 **
 ** $QT_END_LICENSE$
-**
 ****************************************************************************/
 
+/** @brief KYJ1 fireware generator base of QT SDI Project
+** @fn  main.cpp
+** @version V1.0.1
+** @author shenxfsn@@163.com
+*/
 #include <QApplication>
 #include <QCommandLineParser>
 
 #include "mainwindow.h"
 
+/**
+ * @brief main
+ * @param argc
+ * @param argv
+ * @return
+ */
 int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(kyj1gen);

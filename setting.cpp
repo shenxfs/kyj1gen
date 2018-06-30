@@ -1,3 +1,9 @@
+/**
+  * @brief setup widget class
+  * @fn setting.cpp
+  * @author shenxfsn@@163.com
+  * @version V1.0.1
+  */
 #include "setting.h"
 #include "ui_setting.h"
 #include "mainwindow.h"
@@ -5,6 +11,10 @@
 
 #include <QFileDialog>
 
+/**
+ * @brief Setting::Setting
+ * @param parent
+ */
 Setting::Setting(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Setting)
@@ -29,11 +39,17 @@ Setting::Setting(QWidget *parent) :
     ui->lineEdit_4->setText(symQb);
 }
 
+/**
+ * @brief Setting::~Setting
+ */
 Setting::~Setting()
 {
     delete ui;
 }
 
+/**
+ * @brief Setting::on_pushButton_clicked
+ */
 void Setting::on_pushButton_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this,tr("打开.out文件"),QDir(coffPath_sub).absolutePath(),"*.out");
@@ -44,6 +60,9 @@ void Setting::on_pushButton_clicked()
     }
 }
 
+/**
+ * @brief Setting::on_pushButton_2_clicked
+ */
 void Setting::on_pushButton_2_clicked()
 {
     QString pathName = QFileDialog::getExistingDirectory(this,tr("设置输出目录"),outPath_sub);

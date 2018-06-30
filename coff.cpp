@@ -1,6 +1,16 @@
+/**
+ * @brief COFF File class
+ * @fn coff.cpp
+ * @author shenxfsn@@163.com
+ * @version V1.0.0
+ */
 #include "coff.h"
 #include <QDateTime>
 #include <QFile>
+
+/**
+ * @brief CCoff::CCoff
+ */
 CCoff::CCoff()
 {
     pCoffBuffer = NULL;
@@ -12,6 +22,9 @@ CCoff::CCoff()
     isGood = false;
 }
 
+/**
+ * @brief CCoff::~CCoff
+ */
 CCoff::~CCoff()
 {
     if(pCoffBuffer != NULL)
@@ -20,11 +33,20 @@ CCoff::~CCoff()
     }
 }
 
+/**
+ * @brief CCoff::CCoff
+ * @param FileName
+ */
 CCoff::CCoff(QString &FileName)
 {
     isGood = this->open(FileName);
 }
 
+/**
+ * @brief CCoff::open
+ * @param CoffFileName
+ * @return
+ */
 bool CCoff::open(QString &CoffFileName)
 {
     QFile file(CoffFileName);
@@ -86,6 +108,10 @@ bool CCoff::open(QString &CoffFileName)
     return ret;
 }
 
+/**
+ * @brief CCoff::GetCoffInfo
+ * @return
+ */
 QString CCoff::GetCoffInfo(void)
 {
     QString res("");
@@ -100,6 +126,11 @@ QString CCoff::GetCoffInfo(void)
     return res;
 }
 
+/**
+ * @brief CCoff::FindSymbol
+ * @param sym
+ * @return
+ */
 TSymbolTable* CCoff::FindSymbol(QString &sym)
 {
     TSymbolTable *pRec = NULL;
@@ -132,6 +163,13 @@ TSymbolTable* CCoff::FindSymbol(QString &sym)
     return pRec;
 }
 
+/**
+ * @brief CCoff::GetSymbolValue
+ * @param sym
+ * @param pValue
+ * @param len
+ * @return
+ */
 bool CCoff::GetSymbolValue(QString &sym,void *pValue,quint16 len)
 {
     TSymbolTable *pSym;
@@ -202,6 +240,13 @@ bool CCoff::GetSymbolValue(QString &sym,void *pValue,quint16 len)
     return rec;
 }
 
+/**
+ * @brief CCoff::SetSymbolValue
+ * @param sym
+ * @param pValue
+ * @param len
+ * @return
+ */
 bool CCoff::SetSymbolValue(QString &sym,void *pValue,quint16 len)
 {
     TSymbolTable *pSym;
@@ -272,6 +317,11 @@ bool CCoff::SetSymbolValue(QString &sym,void *pValue,quint16 len)
     return rec;
 }
 
+/**
+ * @brief CCoff::Write
+ * @param file
+ * @return
+ */
 bool CCoff::Write(QString &file)
 {
     bool rec = false;
@@ -291,6 +341,12 @@ bool CCoff::Write(QString &file)
     return rec;
 }
 
+/**
+ * @brief CCoff::Resize
+ * @param SecName
+ * @param uResize
+ * @return
+ */
 bool CCoff::Resize(QString &SecName,quint32 uResize)
 {
     bool rec = false;
@@ -352,6 +408,11 @@ bool CCoff::Resize(QString &SecName,quint32 uResize)
     return rec;
 }
 
+/**
+ * @brief CCoff::VerifyCode
+ * @param RomCheck
+ * @return
+ */
 bool CCoff::VerifyCode(QString &RomCheck)
 {
     bool rec = false;
@@ -359,6 +420,10 @@ bool CCoff::VerifyCode(QString &RomCheck)
     return rec;
 }
 
+/**
+ * @brief CCoff::GetimeStamp
+ * @return
+ */
 time_t CCoff::GetimeStamp(void)
 {
     time_t rec = 0;
@@ -369,6 +434,10 @@ time_t CCoff::GetimeStamp(void)
     return rec;
 }
 
+/**
+ * @brief CCoff::SetimeStamp
+ * @param t
+ */
 void CCoff::SetimeStamp(time_t t)
 {
     if(isGood)
@@ -377,6 +446,10 @@ void CCoff::SetimeStamp(time_t t)
     }
 }
 
+/**
+ * @brief CCoff::GetRawSize
+ * @return
+ */
 quint32 CCoff::GetRawSize(void)
 {
     quint32 rec = 0;
@@ -406,6 +479,11 @@ quint32 CCoff::GetRawSize(void)
     return rec;
 }
 
+/**
+ * @brief CCoff::GetSectionName
+ * @param secNum
+ * @return
+ */
 QString CCoff::GetSectionName(quint16 secNum)
 {
     QString res("");
