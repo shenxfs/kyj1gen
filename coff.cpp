@@ -2,7 +2,7 @@
  * @brief COFF File class
  * @fn coff.cpp
  * @author shenxfsn@@163.com
- * @version V1.0.0
+ * @version V1.1.0
  */
 #include "coff.h"
 #include <QDateTime>
@@ -138,7 +138,7 @@ TSymbolTable* CCoff::FindSymbol(QString &sym)
     QString str("");
     if(isGood && (sym.size() != 0))
     {
-        while((ind < pCoffHeader->uiSymbolEntryNumber)&&(str!=sym))
+        while((ind < pCoffHeader->uiSymbolEntryNumber)&&(pRec == NULL))
         {
             str = (const char*)&pSymbolsTab[ind].sName.sName;
             if(str.size() == 0)
@@ -235,6 +235,51 @@ bool CCoff::GetSymbolValue(QString &sym,void *pValue,quint16 len)
                     rec = true;
                 }
             }
+            else
+            {
+                TSectionHeader* pSec = FindSection(".cinit");
+                if((pSec != 0) && (pSec->uiRawDataPointer != 0))
+                {
+                    qint16 *pRaw = (qint16*)&pCoffBuffer[pSec->uiRawDataPointer];
+                    qint32 off = 0;
+                    qint32 ends = pSec->uiSectionSize;
+                    qint16 num = 0;
+                    do
+                    {
+                        num = -pRaw[off];
+                        off++;
+                        qint32 addr = *((qint32*)&pRaw[off]);
+                        off += 2;
+                        if(addr == pSym->lSymValue)
+                        {
+                            if(num != len)
+                            {
+                                rec = false;
+                            }
+                            else if(num == 1)
+                            {
+                                *((qint16*)pValue) = pRaw[off];
+                                rec = true;
+                            }
+                            else if(num == 2)
+                            {
+                                *((qint32*)pValue) =*((qint32*)&pRaw[off]);
+                                rec = true;
+                            }
+                            else
+                            {
+                                for(ind = 0;ind < num;ind++)
+                                {
+                                    ((qint16*)pValue)[ind] = pRaw[ind];
+                                }
+                                rec = true;
+                            }
+                        }
+                        off += num;
+                    }
+                    while((off < ends) && (!rec));
+                }
+            }
         }
     }
     return rec;
@@ -310,6 +355,51 @@ bool CCoff::SetSymbolValue(QString &sym,void *pValue,quint16 len)
                 if(len != 0)
                 {
                     rec = true;
+                }
+            }
+            else
+            {
+                TSectionHeader *pSec = FindSection(".cinit");
+                if((pSec != NULL) && pSec->uiRawDataPointer != 0)
+                {
+                    qint16 *pRaw = (qint16*)&pCoffBuffer[pSec->uiRawDataPointer];
+                    qint32 off = 0;
+                    qint32 ends = pSec->uiSectionSize;
+                    qint16 num = 0;
+                    do
+                    {
+                        num = -pRaw[off];
+                        off++;
+                        qint32 addr = *((qint32*)&pRaw[off]);
+                        off += 2;
+                        if(addr == pSym->lSymValue)
+                        {
+                            if(num != len)
+                            {
+                                rec = false;
+                            }
+                            else if(num == 1)
+                            {
+                                pRaw[off] = *((qint16*)pValue);
+                                rec = true;
+                            }
+                            else if(num == 2)
+                            {
+                                *((qint32*)&pRaw[off]) = *((qint32*)pValue);
+                                rec = true;
+                            }
+                            else
+                            {
+                                for(ind = 0;ind < num;ind++)
+                                {
+                                    pRaw[ind] = ((qint16*)pValue)[ind];
+                                }
+                                rec = true;
+                            }
+                        }
+                        off += num;
+                    }
+                    while((off < ends) && (!rec));
                 }
             }
         }
@@ -519,4 +609,37 @@ QString CCoff::GetSectionName(quint16 secNum)
         }
     }
     return res;
+}
+
+/**
+ * @brief CCoff::FindSection
+ * @param sec
+ * @return
+ */
+TSectionHeader *CCoff::FindSection(QString sec)
+{
+    TSectionHeader *rec = NULL;
+    qint16 index = 0;
+    QString str("");
+    qint16 secNum = pCoffHeader->usSectionNumber;
+    do
+    {
+        str = (const char*)pSectionHeader[index].SectionName.sName;
+        if(str.size() == 0)
+        {
+            str = (const char*)&strList[pSectionHeader[index].SectionName.uiIndex[1]];
+        }
+        else if(str.size() >= 8)
+        {
+            str = str.left(8);
+        }
+        index++;
+    }
+    while((index < secNum)&&(str != sec));
+    if(str == sec)
+    {
+        index--;
+        rec = &pSectionHeader[index];
+    }
+    return rec;
 }

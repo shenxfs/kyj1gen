@@ -51,7 +51,7 @@
 /**
  * @brief MainWindos class
  * @fn mainwindow.cpp
- * @version V1.0.1
+ * @version V1.1.0
  * @author shenxfsn@@163.com
  */
 #include <QtWidgets>
@@ -180,7 +180,7 @@ void MainWindow::about()
 {
    QMessageBox::about(this, tr("关于KYJ1gen"),
             tr("<b>KYJ1gen</b> 监控管理软件固件生成工具，"
-               "基于Qt SDI示例工程。版本V1.0.1"));
+               "基于Qt SDI示例工程。版本V1.1.0"));
 }
 
 /**
@@ -666,7 +666,7 @@ void MainWindow::creatDockWidget()
     QDockWidget *dock3 = new QDockWidget(tr("符号表"));
     symWidget = new QTableWidget(dock3);
 
-    symWidget->setColumnCount(5);
+    symWidget->setColumnCount(6);
 
     coffProperty();
     dock1->setWidget(coffInfo);
@@ -864,7 +864,6 @@ void MainWindow::generate()
             }
         }
     }
-
     for(int i = 0;i < productList.size();i++)
     {
         product_t pd = productList.at(i);
@@ -887,7 +886,7 @@ void MainWindow::generate()
                     out<<QString(tr("产品号：%1,传感器号：%2 传感器方程：k=%3，b=%4 Qk=%5 Qb=%6"))
                         .arg(pd.pn).arg(pd.sn).arg(pd.k).arg(pd.b).arg(Qk,4,16,QLatin1Char('0')).arg(Qb,4,16,QLatin1Char('0'));
                     frep.close();
-                    output->append(QString(tr("产品编号：%1固件生成成功)")).arg(pd.pn));
+                    output->append(QString(tr("产品编号：%1固件生成成功")).arg(pd.pn));
                 }
                 else
                 {
@@ -1072,7 +1071,8 @@ void MainWindow::coffProperty()
         if(symtab != NULL)
         {
             QStringList tableHead;
-            tableHead<<QString(tr("符号名"))<<QString(tr("值"))<<QString(tr("段号"))<<QString(tr("存储类"))<<QString(tr("存储扩展"));
+            tableHead<<QString(tr("符号名"))<<QString(tr("值"))<<QString(tr("段号"))<<QString(tr("存储类"))
+                    <<QString(tr("存储扩展"))<<QString(tr("符号类型"));
             symWidget->setHorizontalHeaderLabels(tableHead);
             symWidget->setRowCount(coffHeader->uiSymbolEntryNumber);
             quint32 ind = 0;
@@ -1098,6 +1098,7 @@ void MainWindow::coffProperty()
                 symWidget->setItem(ind,2,new QTableWidgetItem(QString(tr("%1")).arg(symtab[ind].siNum)));
                 symWidget->setItem(ind,3,new QTableWidgetItem(QString(tr("0x%1")).arg(symtab[ind].cStorClass,4,16,QLatin1Char('0'))));
                 symWidget->setItem(ind,4,new QTableWidgetItem(QString(tr("%1")).arg(symtab[ind].cMEM)));
+                symWidget->setItem(ind,5,new QTableWidgetItem(QString(tr("0x%1")).arg(symtab[ind].res,4,16,QLatin1Char('0'))));
 
                 iMem = symtab[ind].cMEM;
                 ind++;

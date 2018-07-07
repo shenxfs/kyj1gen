@@ -171,6 +171,7 @@ class CCoff
         TCoffHeader *GetCoffHeader(){return pCoffHeader;}
         TCoffOptionalHeader *GetOptioHeader(){return pCoffOptionalHeader;}
         TSectionHeader *GetSectionHeader(){return pSectionHeader;}
+        TSectionHeader *FindSection(QString sec);
         TSmallSectionHeader *GetSmalSectionHeader(){return pSmallSectionHeader;}
         TSymbolTable *GetSymbolTable(){return pSymbolsTab;}
         char *GetString(void){return strList;}
